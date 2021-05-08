@@ -1,0 +1,27 @@
+{
+  "name": "benchmark-done-right",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Many benchmarks suck, because they don't align tasks the tool does.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "bench": "npm run build && node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
+    "@babel/preset-typescript": "^7.13.0",
+    "@swc/core": "^1.2.55",
+    "@types/babel__core": "^7.1.14",
+    "@types/benchmark": "^2.1.0",
+    "@types/node": "^15.0.2",
+    "benchmark": "^2.1.4",
+    "esbuild": "^0.11.20",
+    "rxjs": "^7.0.0",
+    "typescript": "^4.2.4"
+  }
+}
