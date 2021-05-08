@@ -1,4 +1,4 @@
-import { runTransforms } from "./compat-transform/es5";
+import { runTransforms } from "./compat-transform";
 
 (async () => {
     await runTransforms();
