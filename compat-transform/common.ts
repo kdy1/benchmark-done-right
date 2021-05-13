@@ -16,7 +16,7 @@ import chalk from 'chalk'
 import { transformSync as transformSyncEsbuild, transform as transformEsbuild } from 'esbuild'
 import ts from 'typescript'
 import { JscTarget } from '@swc/core';
-import { toTsTarget } from '../util';
+import { store, storeResult, toTsTarget } from '../util';
 
 
 const cpuCount = os.cpus().length - 1
@@ -33,10 +33,10 @@ export async function run(target: JscTarget) {
     await runSync(target);
 
     console.log(`[${chalk.green(target)}] Running async benchmarks`);
-    await runAsync(target, 1, asyncSuite);
+    await runAsync(target, 1, asyncSuite, 'async');
 
     console.log(`[${chalk.green(target)}] Running parallel benchmarks`);
-    await runAsync(target, cpuCount, parallelSuite);
+    await runAsync(target, cpuCount, parallelSuite, 'parallel');
 }
 
 
@@ -95,7 +95,9 @@ async function runSync(target: JscTarget) {
         .on('cycle', function (event: Benchmark.Event) {
             console.info(String(event.target))
         })
-        .on('complete', function (this: Benchmark.Target & Benchmark.Suite) {
+        .on('complete', async function (this: Benchmark.Target & Benchmark.Suite) {
+            await storeResult(`transform-sync-${target}`, this);
+
             console.info(
                 `${this.name} bench suite: Fastest is ${chalk.green(
                     this.filter('fastest').map((s: Benchmark.Target) => s.name).toString(),
@@ -108,7 +110,7 @@ async function runSync(target: JscTarget) {
     await task;
 }
 
-async function runAsync(target: JscTarget, parallel: number, suite: Suite) {
+async function runAsync(target: JscTarget, parallel: number, suite: Suite, name: string) {
     let defer: () => void
     const task = new Promise<void>((resolve) => {
         defer = resolve
@@ -173,7 +175,8 @@ async function runAsync(target: JscTarget, parallel: number, suite: Suite) {
             event.target.hz = event.target!.hz! * parallel
             console.info(String(event.target))
         })
-        .on('complete', function (this: Benchmark.Target & Benchmark.Suite) {
+        .on('complete', async function (this: Benchmark.Target & Benchmark.Suite) {
+            await storeResult(`transform-${name}-${target}`, this);
             console.info(
                 `${this.name} bench suite: Fastest is ${chalk.green(
                     this.filter('fastest').map((t: Benchmark.Target) => t.name).toString(),
