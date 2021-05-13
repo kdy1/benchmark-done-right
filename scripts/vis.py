@@ -11,8 +11,9 @@ def process(f):
     with open('.data/%s' % f, 'r') as f:
         data = json.load(f)
     keys = list(data.keys())
+    keys_without_target = list(map(lambda s: s.split('(')[0].strip(), keys))
     values = list(data.values())
-    plt.bar(keys, values)
+    plt.bar(keys_without_target, values)
     plt.title('%s (%s)' % (op, test_type))
     plt.xlabel('Toolchain')
     plt.ylabel('Op/s (Higher is better)')
