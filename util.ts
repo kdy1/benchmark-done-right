@@ -24,7 +24,7 @@ export async function storeResult(op: string, res: Benchmark.Target & Benchmark.
     await store(op, reduced)
 }
 
-export function toTsTarget(target: JscTarget): ts.ScriptTarget {
+export function toTsTarget(target: JscTarget): ts.ScriptTarget | undefined {
     switch (target) {
         case "es3":
             return ts.ScriptTarget.ES3
